@@ -60,8 +60,8 @@ static void MX_TIM2_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_USART2_UART_Init(void);
 /* USER CODE BEGIN PFP */
-void command_parser_fsm(void);
-void uart_communication_fsm(void);
+//void command_parser_fsm(void);
+//void uart_communication_fsm(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -79,28 +79,33 @@ void command_parser_fsm() {
 		switch(parser_mode) {
 		case INIT:
 			if (buffer[index] == '!') parser_mode = RST_BEGIN;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case RST_BEGIN:
 			if (buffer[index] == 'R') parser_mode = RST_R;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case RST_R:
 			if (buffer[index] == 'S') parser_mode = RST_S;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case RST_S:
 			if (buffer[index] == 'T') parser_mode = RST_T;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case RST_T:
 			if (buffer[index] == '#') {
-				parser_mode = INIT;
-				message_mode = SEND;
 				RST = 0;
 				OK = 1;
+				parser_mode = INIT;
+				message_mode = SEND;
 				value_flag = 1;
 			}
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		default:
@@ -113,14 +118,17 @@ void command_parser_fsm() {
 		switch (parser_mode) {
 		case INIT:
 			if (buffer[index] == '!') parser_mode = OK_BEGIN;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case OK_BEGIN:
 			if (buffer[index] == 'O') parser_mode = OK_O;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case OK_O:
 			if (buffer[index] == 'K') parser_mode = OK_K;
+			else parser_mode = INIT;
 			HAL_UART_Transmit(&huart2, (uint8_t *)&buffer[index], 1, 1000);
 			break;
 		case OK_K:
@@ -131,6 +139,7 @@ void command_parser_fsm() {
 				RST = 1;
 				OK = 0;
 			}
+			else parser_mode = INIT;
 			break;
 		default:
 			parser_mode = INIT;
@@ -144,7 +153,7 @@ void uart_communication_fsm(void) {
 	case INIT:
 		break;
 	case SEND:
-		HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 		if (value_flag) {
 			ADC_value = HAL_ADC_GetValue(&hadc1);
 			value_flag = 0;
@@ -197,8 +206,8 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart2, &temp, 1);
-  HAL_ADC_Start(&hadc1);
   HAL_TIM_Base_Start_IT(&htim2);
+  HAL_ADC_Start(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -394,14 +403,14 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : PA5 */
-  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  /*Configure GPIO pin : LED_Pin */
+  GPIO_InitStruct.Pin = LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+  HAL_GPIO_Init(LED_GPIO_Port, &GPIO_InitStruct);
 
 }
 
