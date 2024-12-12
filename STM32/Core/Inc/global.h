@@ -1,0 +1,49 @@
+/*
+ * global.h
+ *
+ *  Created on: Dec 12, 2024
+ *      Author: HP
+ */
+
+#ifndef INC_GLOBAL_H_
+#define INC_GLOBAL_H_
+
+#include "main.h"
+
+#define INIT		0
+#define RST_BEGIN	1
+#define RST_R		2
+#define RST_S		3
+#define RST_T		4
+#define OK_BEGIN	5
+#define OK_O		6
+#define OK_K		7
+
+// FOR COMMUNICATION FSM
+#define SEND		1
+#define WAIT		2
+
+// FOR UART
+#define MAX_BUFFER_SIZE 30
+
+#define TIME_CYCLE	10
+#define MAX_COUNTER  10
+
+extern uint8_t temp;
+extern uint8_t buffer[MAX_BUFFER_SIZE];
+extern int parser_mode;
+extern int message_mode;
+extern uint8_t command_flag;
+extern uint8_t command_data[MAX_BUFFER_SIZE];
+
+extern uint8_t index_buffer;
+extern uint8_t buffer_flag;
+
+extern int ADC_value;
+extern char str[50];
+extern int value_flag;
+
+extern int RST;
+extern int OK;
+
+#endif /* INC_GLOBAL_H_ */
