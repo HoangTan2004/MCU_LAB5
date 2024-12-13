@@ -10,8 +10,7 @@
 
 #include "global.h"
 
-void setTimer(int index, int duration);
+void setTimer(int duration);
 void timerRun(void);
-int isTimerExpired(int index);
 
 #endif /* INC_SOFTWARE_TIMER_H_ */

@@ -9,6 +9,10 @@
 #define INC_GLOBAL_H_
 
 #include "main.h"
+#include "fsm.h"
+#include "software_timer.h"
+#include <stdio.h>
+#include "string.h"
 
 #define INIT		0
 #define RST_BEGIN	1
@@ -27,7 +31,6 @@
 #define MAX_BUFFER_SIZE 30
 
 #define TIME_CYCLE	10
-#define MAX_COUNTER  10
 
 extern uint8_t temp;
 extern uint8_t buffer[MAX_BUFFER_SIZE];
@@ -45,5 +48,7 @@ extern int value_flag;
 
 extern int RST;
 extern int OK;
+
+extern int timer_flag;
 
 #endif /* INC_GLOBAL_H_ */
